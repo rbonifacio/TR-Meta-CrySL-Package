@@ -1,0 +1,12 @@
+;1.2.1-1.2.0;1.2.0-1.2.0-rc4;1.2.0-rc4-1.2.0-rc3;1.2.0-rc3-1.2.0-rc2;1.2.0-rc2-1.1.1;1.1.1-1.1.0;1.1.0-1.0.0
+Move Method;0;0;0;0;0;0;0
+Rename Method;0;0;0;0;0;0;4
+Remove Method;0;0;3;2;0;0;14
+Push Down Method;0;0;0;0;0;0;0
+Inline Method;0;0;0;0;0;0;0
+Change in Parameter List ;0;0;0;0;0;0;0
+Change in Exception List;1;0;0;1;0;0;21
+Change in Return Type Method;0;0;0;0;0;0;2
+Lost Visibility;0;0;0;0;0;0;2
+Add Final Modifier;0;0;0;0;0;0;0
+Remove Static Modifier;0;0;0;0;0;0;0

@@ -1,0 +1,38 @@
+---
+title: "Study 03: Android Crypto Violation Analysis"
+author: "Rodrigo Bonifácio, Stefan Krüger, Krishna Narasimhan, Eric Bodden, and Mira Mezini "
+date: "March, 2021"
+output:
+  prettydoc::html_pretty:
+    theme: architect
+    highlight: github
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.path = "images/")
+library(reshape2)
+library(sqldf)
+setwd(".")
+```
+
+## Load the Bouncy Castle dataset
+
+
+```{r load}
+bc <- read.csv("bc.csv", head=T, sep=";")
+bc <- melt(bc, id.vars=c("Change"), variable.name="Release", value.name="Total")
+colnames(bc)
+```
+
+## Generate the plot summarizing the bouncy castle braking changes
+
+```{r plot}
+bcc <- sqldf("select Change, sum(Total) as Total from bc group by Change")
+bcc <- bcc[order(-bcc$Total), ]
+barplot(bcc$Total, col=topo.colors(11))
+legend("topright", title="Changes", fill=topo.colors(11), legend=bcc$Change, cex = 0.8)
+```

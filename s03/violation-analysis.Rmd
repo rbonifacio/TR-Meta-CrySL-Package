@@ -1,0 +1,141 @@
+---
+title: "Study 03: Android Crypto Violation Analysis"
+author: "Rodrigo Bonifácio, Stefan Krüger, Krishna Narasimhan, Eric Bodden, and Mira Mezini "
+date: "March, 2021"
+output:
+  prettydoc::html_pretty:
+    theme: architect
+    highlight: github
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+require(sqldf)
+require(xtable)
+setwd(".")
+```
+
+## Load the datasets
+
+We have a total of 9 + 1 datasets
+
+   * One dataset of violations for each one of the 9 configurations used in the study
+   * One dataset with the specification of the Android apps used in the study
+
+
+```{r load}
+android_0108 <- read.csv("android-0108.csv", head=F, sep=";")
+android_0116 <- read.csv("android-0116.csv", head=F, sep=";")
+android_25plus <- read.csv("android-25plus.csv", head=F, sep=";")
+
+android_bsi_0108 <- read.csv("android-bsi-0108.csv", head=F, sep=";")
+android_bsi_0116 <- read.csv("android-bsi-0116.csv", head=F, sep=";")
+android_bsi_25plus <- read.csv("android-bsi-25plus.csv", head=F, sep=";")
+
+android_cc_0108 <- read.csv("android-cc-0108.csv", head=F, sep=";")
+android_cc_0116 <- read.csv("android-cc-0116.csv", head=F, sep=";")
+android_cc_25plus <- read.csv("android-cc-25plus.csv", head=F, sep=";")
+
+apps <- read.csv("apps.csv")
+```
+
+## Rename the datasets' columns 
+
+```{r rename}
+
+colnames(android_0108) <- c("configuration", "project_name", "clasz", "class_name", "algorithm", "expected", "full_description") 
+colnames(android_0116) <- c("configuration", "project_name", "clasz","class_name", "algorithm", "expected", "full_description") 
+colnames(android_25plus) <- c("configuration", "project_name", "clasz","class_name", "algorithm", "expected", "full_description") 
+colnames(android_bsi_0108) <- c("configuration", "project_name", "clasz","class_name", "algorithm", "expected", "full_description") 
+colnames(android_bsi_0116) <- c("configuration", "project_name", "clasz","class_name", "algorithm", "expected", "full_description") 
+colnames(android_bsi_25plus) <- c("configuration", "project_name", "clasz","class_name", "algorithm", "expected", "full_description") 
+colnames(android_cc_0108) <- c("configuration", "project_name", "clasz","class_name", "algorithm", "expected", "full_description") 
+colnames(android_cc_0116) <- c("configuration", "project_name", "clasz","class_name", "algorithm", "expected", "full_description") 
+colnames(android_cc_25plus) <- c("configuration", "project_name", "clasz","class_name", "algorithm", "expected", "full_description") 
+```
+
+## Join the datasets of violations
+
+```{r joining}
+violations <- rbind(android_0108, android_0116)
+violations <- rbind(violations, android_25plus)
+violations <- rbind(violations, android_bsi_0108)
+violations <- rbind(violations, android_bsi_0116)
+violations <- rbind(violations, android_bsi_25plus)
+violations <- rbind(violations, android_cc_0108)
+violations <- rbind(violations, android_cc_0116)
+violations <- rbind(violations, android_cc_25plus)
+```
+
+## Number of rows in the `violations` and `apps` datasets
+
+```{r}
+nrow(violations)
+nrow(apps)
+```
+
+## Remove from the analysis apps with less than 9 configurations
+
+```{r}
+apps <- sqldf("select SoftwareId, Configurations 
+                   from apps 
+                   where Configurations = 9")
+nrow(apps)
+
+apps["project_name"] <- gsub(".apk", "", apps$SoftwareId)
+apps["project_name"] <- gsub("/home/amluis/cryptoAnalysis/AndroidZooApps/", "", apps$project_name)
+```
+
+## Join the `violations` and `apps` datasets
+
+```{r}
+df <- sqldf("select *
+             from violations
+             where project_name in 
+             (select project_name from apps)")
+```
+
+## Summarize the number of violations
+
+### Considering all violations 
+```{r}
+sqldf("select configuration, count(distinct project_name)
+      from violations 
+      group by configuration")
+```
+
+### Considering all violations not related to `SHA256withECDSA` (a false positive)
+
+
+```{r}
+sqldf("select configuration, count(distinct project_name) 
+      from violations 
+      where algorithm != 'SHA256withECDSA'
+      group by configuration")
+```
+
+### Considering all violations, though discarding common libraries (from Google and Facebook)
+
+```{r}
+
+t1 <- sqldf("select configuration, count(distinct project_name) as apps, count(*) violations
+      from violations 
+      where algorithm != 'SHA256withECDSA' 
+         and not (class_name like '%MessageDigest' 
+                  and full_description like '%Third parameter (with value 0)%') 
+         and clasz not like 'com.google.android.gms%' 
+         and clasz not like 'com.facebook.ads%' 
+         and clasz not like 'com.unity3d%' and 
+         clasz not like 'com.android.%'
+      group by configuration")
+
+t1["rate"] <- t1$apps * 100 / 6714  
+
+sqldf('select configuration, 6714, apps, rate, violations from t1')
+
+xtable(sqldf('select configuration, 6714, apps, rate, violations from t1'))
+```
