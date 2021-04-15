@@ -196,7 +196,7 @@ tool](https://github.com/CROSSINGTUD/CryptoAnalysis).
    
 ### Datasets, Tools, and Scripts 
 
-   * [HTML](/s03/violation-analysis.html)
-   * [RMD](/s03/violation-analysis.Rmd)
+   * [HTML](s03/violation-analysis.html)
+   * [RMD](s03/violation-analysis.Rmd)
 
 
