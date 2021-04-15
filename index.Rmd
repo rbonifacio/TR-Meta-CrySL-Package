@@ -2,10 +2,10 @@
 title: "Dealing with Variability in API Misuse Specification" 
 author: "Rodrigo Bonifácio, Stefan Krüger, Krishna Narasimhan, Eric Bodden, and Mira Mezini "
 date: "March, 2021"
-output:
+output: 
   prettydoc::html_pretty:
-    theme: architect
-    highlight: github
+   theme: tactile
+   highlight: github
 vignette: >
   %\VignetteIndexEntry{Vignette Title}
   %\VignetteEngine{knitr::rmarkdown}
@@ -15,35 +15,188 @@ vignette: >
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Abstract
+
+```{css, echo=FALSE}
+.java {
+  font-size: 85%;
+}
+```
+
+# Abstract
 
 APIs are the primary mechanism for developers to gain access to externally defined services and tools. However, previous research has revealed API misuses that violate the contract of APIs to be prevalent. Such misuses can have disastrous consequences, especially in the context of cryptographic libraries. To address this issue, various API-misuse detectors have been proposed. CogniCrypt, one of the most versatile of such detectors, involves a specification language(CrySL), to specify API usage contracts. APIs evolve over time, though, and any specification describes API usages only for a single version of an API in a single context. There are various sources of variability that affect how an API should be used. For example, a new release may introduce breaking changes. Many APIs have a provider architecture promoting extensibility through pluggable implementations. In the context of cryptography, different standards require different usages of the same API. Currently, little is known about how such variability impacts the specification of correct API usage. In this paper, we investigate this question by analysing the impact of various sources of variability on the most widely used cryptographic library in Java, the JCA. The results of our investigation show that sources of variability like new versions of the API, security standards and pluggable providers significantly impact the specifications and introduce number of breaking changes. We then use the insights gained from our investigation to motivate extensions to the CrySL language  called MetaCrySL, which builds on the concept of meta variables and feature modelling. We evaluate MetaCrySL by specifying usage rules for a family of Android versions, and illustrate that our DSL extension, MetaCrySL is not only able to model all forms of variability we identified, but also drastically simplify specifying a large family of APIs and maintaining these specifications when compared to the CrySL. 
 
-
-## MetaCrySL implementations
+# (1) MetaCrySL implementations
 
 We have two implementations of MetaCrySL: the first, based on Rascal-MPL, is 
 discussed in the paper; the second, based on XText, is the most up-to-date 
 implementation. 
 
-   * [MetaCrySL in Rascal] (https://github.com/CROSSINGTUD/MetaCrySL)
-   * [MetaCrySL in XText] (https://github.com/PAMunb/MetaCrySL) 
+   * [MetaCrySL in Rascal](https://github.com/CROSSINGTUD/MetaCrySL)
+   * [MetaCrySL in XText](https://github.com/PAMunb/MetaCrySL) 
    
 Detailed instructions about how to set up and use these implementations are 
 available in the respective repositories. 
    
-## Study 01: Cryptographic API Evolution and Breaking Changes
 
-   * [Tool Support] (https://github.com/rbonifacio/api-evolution)
+# (2) Domain Analysis 
+
+To better understand the impacts of variability on API misuse specification, we conducted a domain analysis that sought to understand reuse opportunities across Crypto-API- usage specifications, considering different libraries and their different versions, different cryptographic primitives, and different cryptographic standards. 
+
+As such, we answer the following research questions. 
+
+   * (RQ1) How do different APIs and their implementations vary the specifications 
+     of the correct usage of cryptographic primitives? 
+     
+   * (RQ2) How do existing cryptographic standards vary the notion of secure 
+     or compliant use of cryptographic libraries?  
+     
+   *  (RQ3) How does the evolution of a cryptographic library vary its correct usage over time?
+   
+   
+To answer the first research question we started reading the official documentation, books,
+tutorials in gray literature, code examples, and test cases of the following 
+libraries. 
+
+   * [Java JCA / JCE](https://docs.oracle.com/javase/9/security/toc.htm)
+   * [Java Bouncy Castle](https://www.bouncycastle.org/)
+   * [Java Google Tink](https://github.com/google/tink)
+   * [C/C++ WolfCrypt](https://www.wolfssl.com/products/wolfcrypt-2/) 
+   * [C/C++ OpenSSL](https://www.openssl.org/)
+   
+We also contribute by writing [CrySL](https://www.eclipse.org/cognicrypt/documentation/crysl/) specifications for several primitives of the Bouncy Castle and Google Tink 
+libraries. These specifications could be found in the 
+[CrySL Rules repository](https://github.com/CROSSINGTUD/Crypto-API-Rules). To 
+answer the second research question, we mined the documentation of three 
+cryptographic standards: 
+
+   * [NIST FIPS](https://csrc.nist.gov/publications/detail/fips/140/2/final) 
+   * [BSI](https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/TechGuidelines/TG02102/BSI-TR-02102-1.html)
+   * [Ecrypt D5.4](https://www.ecrypt.eu.org/csa/documents/D5.4-FinalAlgKeySizeProt.pdf)
+
+
+and updated an initial set of CrySL specifications tailored for each one of 
+these cryptographic standards. Afterwards, we generated complete 
+sets of CrySL specifications using MetaCrySL. To anwswer the third 
+research question we mined the evolution of Java cryptographic libraries 
+(JCA/JCE, Bouncy Castle, and Google Tink). 
+
+### Cryptographic API Evolution and Breaking Changes
+
+   * [API Evolution tool](https://github.com/rbonifacio/api-evolution)
+   * [Breaking Changes tool](https://github.com/rbonifacio/apidiff/)
+     
+      We implemented a slight extension to the [APIDiff library](https://github.com/aserg-ufmg/apidiff) that computes 
+      the breaking changes between two revisions. This additional feature 
+      could be used according to the following test case. 
+      
+```{java class.source="java", eval=F}
+@Test
+public void testMethodBreakingChanges() {
+  try {
+    String r1rv60 = "52b0902592e770b8116f80f2eab7a4048b589d7d"; // commit id for revision r1rv60
+	String r1rv59 = "6de1c17dda8ffdb19431ffcadbce1836867a27a9"; // commit id for revision r1rv59
+			
+	String out = getClass().getResource("/").getFile();
+			
+	APIDiff diff = new APIDiff("bc", "https://github.com/bcgit/bc-java.git");
+			
+	diff.setPath(out);
+			
+	Result res = diff.detectChangeBetweenRevisions(r1rv60, r1rv59, Classifier.API);
+			
+	long methodBreakingChanges = res.getChangeMethod().stream()
+			                             .filter(c -> c.isBreakingChange())
+			                             .count();
+			
+	Assert.assertEquals(40, methodBreakingChanges); // expecting 40 methodBreakingChanges
+			
+  }
+  catch(Exception ex) {
+	 Assert.fail();
+  }
+}
+```
+   
+We used this [program](https://github.com/FHandrick/apiTimeLife) to compute the 
+breaking changes from Bouncy Castle and Google Tink. Regarding JCA / JCE, we 
+follow a manual approach of reading the JavaDoc of the API classes among its 
+different revisions. 
+
+### Datasets and Scripts 
+   
+   * Summary of API evolution
+      * [releases](s01/releases.csv)
+      
+   * Summary of Breaking Changes
+      * [Bouncy Castle dataset](s01/apiTimeLine/bouncyCastle.csv)
+      * [Google Tink dataset](s01/apiTimeLine/google-tink.csv)
+      
    * Scripts:
-      * [RMD]
-      * [HTML]
+      * [RMD](s01/evolution-analysis.Rmd)
+      * [HTML](s01/evolution-analysis.html)
+      
+# (3) MetaCrySL empirical assessment 
+
+We evaluated MetaCrySL regarding two dimensions: (a) Compactness (how many 
+lines of specification we can save using MetaCrySL and How much duplication 
+of specifications we can save using MetaCrySL) and (b) Correctness (observing 
+the implications of using the outcomes of MetaCrySL to mine the incorrect 
+use of crypto API). 
+
+In this study we used MetaCrySL to specify 
+different sets of CrySL specifications for 
+the Android platform. These specifications 
+address all JCA/JCE cryptographic primitives, the guidelines from 
+three cryptographic **recommendations** 
+(from the [BSI standard](https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/TechGuidelines/TG02102/BSI-TR-02102-1.html), from the [CogniCrypt project](https://www.eclipse.org/cognicrypt/), 
+and from the [Google Android Cryptographic documentation](https://developer.android.com/guide/topics/security/cryptography)), 
+and three ranges of the Android platform versions (01 -- 08, 01 -- 16, 01 -- 28). 
+The following table shows the nine configurations we derive from 
+these MetaCrySL specifications. 
+
+
+| Config. Id | Primitives      | Android Platform Version | Crypto Standard                      |
+| ---------- |:---------------:|:------------------------:| ------------------------------------:|
+| C01        | All primitives  | 01 -- 08                 | Android Base recommendations         |
+| C02        | All primitives  | 01 -- 16                 | Android Base recommendations         |
+| C03        | All primitives  | 01 -- 28                 | Android Base recommendations         |
+| C04        | All primitives  | 01 -- 08                 | Android BSI Standard recommendations |
+| C05        | All primitives  | 01 -- 16                 | Android BSI Standard recommendations |
+| C06        | All primitives  | 01 -- 28                 | Android BSI Standard recommendations |
+| C07        | All primitives  | 01 -- 08                 | Android CogniCrypt recommendations   |
+| C08        | All primitives  | 01 -- 16                 | Android CogniCrypt recommendations   |
+| C09        | All primitives  | 01 -- 28                 | Android CogniCrypt recommendations   |
 
 
 
-## Study 03: Android Crypto Violations
+### MetaCrySL Artifacts used in this study
 
-   * [HTML] (/s03/violation-analysis.html)
-   * [RMD] (/s03/violation-analysis.Rmd)
+   * [MetaCrySL JCA/JCE specifications](https://github.com/CROSSINGTUD/MetaCrySL/tree/master/samples/jca/base)
+   * [MetaCrySL Android Base (refinements and configurations)](https://github.com/CROSSINGTUD/MetaCrySL/tree/master/samples/jca/android)
+   * [MetaCrySL Android BSI (refinements and configurations)](https://github.com/CROSSINGTUD/MetaCrySL/tree/master/samples/jca/android-bsi)
+   * [MetaCrySL Android CogniCrypt (refinements and configurations)](https://github.com/CROSSINGTUD/MetaCrySL/tree/master/samples/jca/android-cc)
+
+
+### Generated CrySL rules 
+
+   * [Android Base (all versions)](https://github.com/CROSSINGTUD/MetaCrySL/tree/master/samples/jca/android-cc/target/research)
+   * [Android BSI (all versions)](https://github.com/CROSSINGTUD/MetaCrySL/tree/master/samples/jca/android-bsi/target/research)
+   * [Android CogniCrypt (all versions)](https://github.com/CROSSINGTUD/MetaCrySL/tree/master/samples/jca/android-cc/target/research)
+  
+### Binary Version of CrySL
+
+We used the CogniCrypt Eclipse plugin to compile the generated CrySL rules. The 
+compiled verision of the CrySL rules are used as input to the [CogniCrypt SAST 
+tool](https://github.com/CROSSINGTUD/CryptoAnalysis). 
+
+   * [Android Base (all versions)](https://github.com/rbonifacio/MetaCrySL-DataSet/tree/master/bin/android)
+   * [Android BSI (all versions)](https://github.com/rbonifacio/MetaCrySL-DataSet/tree/master/bin/android-bsi)
+   * [Android CogniCrypt (all versions)](https://github.com/rbonifacio/MetaCrySL-DataSet/tree/master/bin/android-cc)
+   
+### Datasets, Tools, and Scripts 
+
+   * [HTML](/s03/violation-analysis.html)
+   * [RMD](/s03/violation-analysis.Rmd)
 
 

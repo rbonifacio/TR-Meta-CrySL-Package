@@ -1,10 +1,10 @@
 ---
-title: "Study 03: Android Crypto Violation Analysis"
+title: "Study 03: Bouncy Castle Evolution and Breaking Changes"
 author: "Rodrigo Bonifácio, Stefan Krüger, Krishna Narasimhan, Eric Bodden, and Mira Mezini "
 date: "March, 2021"
 output:
   prettydoc::html_pretty:
-    theme: architect
+    theme: tactile
     highlight: github
 vignette: >
   %\VignetteIndexEntry{Vignette Title}
@@ -16,11 +16,79 @@ vignette: >
 knitr::opts_chunk$set(echo = TRUE, fig.path = "images/")
 library(reshape2)
 library(sqldf)
+library(stringr)
 setwd(".")
 ```
 
-## Load the Bouncy Castle dataset
+## Load the Bouncy Castle API dataset
 
+```{r}
+bc <- read.csv("releases.csv", sep=",", head=F)
+colnames(bc) <- c("Release", "ClassName", "Abstract", "SuperClass", "Interfaces")
+```
+
+## Check the number of implementations for some primitives
+
+In the paper, we report the number of Bouncy Castle implementations 
+for the cryptographic primitives Block Cipher, MAC, Message Digest, 
+and Stream Cipher. 
+
+```{r}
+md <- sqldf("select Release, count(distinct ClassName) as 'MessageDigest' 
+       from bc 
+       where Interfaces like '%org.bouncycastle.crypto.ExtendedDigest%'
+         and Abstract = 'false'     
+       group by Release
+       order by 2 desc")
+
+mac <- sqldf("select Release, count(distinct ClassName) as MAC 
+       from bc 
+       where Interfaces like '%org.bouncycastle.crypto.Mac%'
+         and Abstract = 'false'     
+       group by Release
+       order by 2 desc")
+
+blockCipher <- sqldf("select Release, count(distinct ClassName) as 'BlockCipher' 
+       from bc 
+       where Interfaces like '%org.bouncycastle.crypto.BlockCipher%'
+         and Abstract = 'false'     
+       group by Release
+       order by 2 desc")
+
+streamCipher <- sqldf("select Release, count(distinct ClassName) as 'StreamCipher' 
+       from bc 
+       where Interfaces like '%org.bouncycastle.crypto.StreamCipher%'
+         and Abstract = 'false'     
+       group by Release
+       order by 2 desc")
+
+all <- merge(md, mac)
+all <- merge(all, blockCipher)
+all <- merge(all, streamCipher)
+
+all$Release <- gsub("jdk15-", "", all$Release)
+# all$Release <- as.factor(all$Release)
+```
+
+   * Detail the number of cryptographic implementations 
+   
+```{r}
+all 
+```
+
+   * Generate the plot in the paper's Figure 7
+   
+```{r}
+plot(all$Release, all$MessageDigest,  type = "o", frame = FALSE, pch = 19, 
+     col = "blue", xlab="Release", ylab="Algorithm Implementations", 
+     ylim=c(0,50), cex.lab=0.7, cex.axis=0.7)
+
+lines(all$Release, all$MAC, type = "o", pch=18, col="blue3")
+lines(all$Release, all$BlockCipher, type = "o", pch=17, col="blue4")
+lines(all$Release, all$StreamCipher, type="o", pch=16, col="darkblue")
+```
+
+## Load the Bouncy Castle dataset of breaking changes
 
 ```{r load}
 bc <- read.csv("bc.csv", head=T, sep=";")
@@ -33,6 +101,6 @@ colnames(bc)
 ```{r plot}
 bcc <- sqldf("select Change, sum(Total) as Total from bc group by Change")
 bcc <- bcc[order(-bcc$Total), ]
-barplot(bcc$Total, col=topo.colors(11))
+barplot(bcc$Total, col=topo.colors(11), ylim=c(0,1200))
 legend("topright", title="Changes", fill=topo.colors(11), legend=bcc$Change, cex = 0.8)
 ```

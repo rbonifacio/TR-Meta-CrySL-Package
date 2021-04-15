@@ -4,7 +4,7 @@ author: "Rodrigo Bonifácio, Stefan Krüger, Krishna Narasimhan, Eric Bodden, an
 date: "March, 2021"
 output:
   prettydoc::html_pretty:
-    theme: architect
+    theme: tactile
     highlight: github
 vignette: >
   %\VignetteIndexEntry{Vignette Title}
