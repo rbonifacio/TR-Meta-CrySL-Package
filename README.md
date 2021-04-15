@@ -19,4 +19,4 @@ APIs are the primary mechanism for developers to gain access to externally defin
 
 ## Link to the package
 
-   * [ECOOP artifact package](https://htmlpreview.github.io/??https://github.com/rbonifacio/TR-Meta-CrySL-Package/blob/master/index.html)
+   * [ECOOP artifact package](https://htmlpreview.github.io/??https://github.com/rbonifacio/TR-Meta-CrySL-Package/blob/master/artifact.html)
