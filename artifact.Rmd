@@ -23,8 +23,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # Abstract
-
-APIs are the primary mechanism for developers to gain access to externally defined services and tools. However, previous research has revealed API misuses that violate the contract of APIs to be prevalent. Such misuses can have disastrous consequences, especially in the context of cryptographic libraries. To address this issue, various API-misuse detectors have been proposed. CogniCrypt, one of the most versatile of such detectors, involves a specification language(CrySL), to specify API usage contracts. APIs evolve over time, though, and any specification describes API usages only for a single version of an API in a single context. There are various sources of variability that affect how an API should be used. For example, a new release may introduce breaking changes. Many APIs have a provider architecture promoting extensibility through pluggable implementations. In the context of cryptography, different standards require different usages of the same API. Currently, little is known about how such variability impacts the specification of correct API usage. In this paper, we investigate this question by analysing the impact of various sources of variability on the most widely used cryptographic library in Java, the JCA. The results of our investigation show that sources of variability like new versions of the API, security standards and pluggable providers significantly impact the specifications and introduce number of breaking changes. We then use the insights gained from our investigation to motivate extensions to the CrySL language  called MetaCrySL, which builds on the concept of meta variables and feature modelling. We evaluate MetaCrySL by specifying usage rules for a family of Android versions, and illustrate that our DSL extension, MetaCrySL is not only able to model all forms of variability we identified, but also drastically simplify specifying a large family of APIs and maintaining these specifications when compared to the CrySL. 
+APIs are the primary mechanism for developers to gain access to externally defined services and tools. However, previous research has revealed API misuses that violate the contract of APIs to be prevalent. Such misuses can have harmful consequences, especially in the context of cryptographic libraries. Various API-misuse detectors have been proposed to address this issue---including CogniCrypt, one of the most versatile of such detectors and that uses a language (CrySL) to specify cryptographic API usage contracts. Nonetheless, existing approaches to detect API misuse had not been designed for systematic reuse, ignoring the fact that different versions of a library, different versions of a platform, and different recommendations/guidelines might introduce variability in the correct usage of an API. Yet, little is known about how such variability impacts the specification of the correct API usage. This paper investigates this question by analyzing the impact of various sources of variability on widely used Java cryptographic libraries (including JCA/JCE, Bouncy Castle, and Google Tink). The results of our investigation show that sources of variability like new versions of the API and security standards significantly impact the specifications. We then use the insights gained from our investigation to motivate an extension to the CrySL language  (named MetaCrySL), which builds on meta-programming concepts. We evaluate MetaCrySL by specifying usage rules for a family of Android versions and illustrate that MetaCrySL can model all forms of variability we identified and drastically reduce the size of a family of specifications for the correct usage of cryptographic APIs.   
 
 # (1) MetaCrySL implementations
 
@@ -36,7 +35,10 @@ implementation.
    * [MetaCrySL in XText](https://github.com/PAMunb/MetaCrySL) 
    
 Detailed instructions about how to set up and use these implementations are 
-available in the respective repositories. 
+available in the respective repositories. The following video explains how 
+to use the MetaCrySL Rascal version. 
+
+[![MetaCrySL on YouTube](mcsl.png){ width=50% }](https://youtu.be/PmYWK926RrM)
    
 
 # (2) Domain Analysis 
