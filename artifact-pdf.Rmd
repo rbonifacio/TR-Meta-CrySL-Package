@@ -1,13 +1,14 @@
 ---
-title: "Dealing with Variability in API Misuse Specification" 
-subtitle: "Artifact Package"
+title: "Dealing with Variability in API Misuse Specification"
+subtitle: "(Artifact Package)" 
 author: "Rodrigo Bonifácio, Stefan Krüger, Krishna Narasimhan, Eric Bodden, and Mira Mezini "
 date: "March, 2021"
-output: 
-  prettydoc::html_pretty:
-   theme: tactile
-   highlight: github
-vignette: >
+output: pdf_document
+urlcolor: blue
+#  prettydoc::html_pretty:
+#   theme: tactile
+#   highlight: github
+#vignette: >
 #  %\VignetteIndexEntry{Vignette Title}
 #  %\VignetteEngine{knitr::rmarkdown}
 #  %\VignetteEncoding{UTF-8}
@@ -24,9 +25,8 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # Abstract
-
 APIs are the primary mechanism for developers to gain access to externally defined services and tools. However, previous research has revealed API misuses that violate the contract of APIs to be prevalent. Such misuses can have harmful consequences, especially in the context of cryptographic libraries. Various API-misuse detectors have been proposed to address this issue---including CogniCrypt, one of the most versatile of such detectors and that uses a language (CrySL) to specify cryptographic API usage contracts. Nonetheless, existing approaches to detect API misuse had not been designed for systematic reuse, ignoring the fact that different versions of a library, different versions of a platform, and different recommendations/guidelines might introduce variability in the correct usage of an API. Yet, little is known about how such variability impacts the specification of the correct API usage. This paper investigates this question by analyzing the impact of various sources of variability on widely used Java cryptographic libraries (including JCA/JCE, Bouncy Castle, and Google Tink). The results of our investigation show that sources of variability like new versions of the API and security standards significantly impact the specifications. We then use the insights gained from our investigation to motivate an extension to the CrySL language  (named MetaCrySL), which builds on meta-programming concepts. We evaluate MetaCrySL by specifying usage rules for a family of Android versions and illustrate that MetaCrySL can model all forms of variability we identified and drastically reduce the size of a family of specifications for the correct usage of cryptographic APIs. **In this artifact package**, we present the 
-tools, datasets, and scripts used in the research.   
+tools, datasets, and scripts used in the research.  
 
 # (1) MetaCrySL implementations
 
@@ -99,8 +99,10 @@ research question we mined the evolution of Java cryptographic libraries
 @Test
 public void testMethodBreakingChanges() {
   try {
-    String r1rv60 = "52b0902592e770b8116f80f2eab7a4048b589d7d"; // commit id for revision r1rv60
-	String r1rv59 = "6de1c17dda8ffdb19431ffcadbce1836867a27a9"; // commit id for revision r1rv59
+    // commit id for revision r1rv60 of Bouncy Castle
+    String r1rv60 = "52b0902592e770b8116f80f2eab7a4048b589d7d"; 
+    // commit id for revision r1rv59 of Bouncy Castle
+	String r1rv59 = "6de1c17dda8ffdb19431ffcadbce1836867a27a9"; 
 			
 	String out = getClass().getResource("/").getFile();
 			
@@ -131,15 +133,15 @@ different revisions.
 ### Datasets and Scripts 
    
    * Summary of API evolution
-      * [releases](s01/releases.csv)
+      * [releases](https://github.com/rbonifacio/TR-Meta-CrySL-Package/blob/master/s01/releases.csv)
       
    * Summary of Breaking Changes
-      * [Bouncy Castle dataset](s01/apiTimeLine/bouncyCastle.csv)
-      * [Google Tink dataset](s01/apiTimeLine/google-tink.csv)
+      * [Bouncy Castle dataset](https://github.com/rbonifacio/TR-Meta-CrySL-Package/blob/master/s01/apiTimeLine/bouncyCastle.csv)
+      * [Google Tink dataset](https://github.com/rbonifacio/TR-Meta-CrySL-Package/blob/master/s01/apiTimeLine/google-tink.csv)
       
    * Scripts:
-      * [RMD](s01/evolution-analysis.Rmd)
-      * [HTML](s01/evolution-analysis.html)
+      * [RMD](https://github.com/rbonifacio/TR-Meta-CrySL-Package/blob/master/s01/evolution-analysis.Rmd)
+      * [HTML](https://htmlpreview.github.io/?https://github.com/rbonifacio/TR-Meta-CrySL-Package/blob/master/s01/evolution-analysis.html)
       
 # (3) MetaCrySL empirical assessment 
 
@@ -189,10 +191,10 @@ these MetaCrySL specifications.
    * [Android BSI (all versions)](https://github.com/CROSSINGTUD/MetaCrySL/tree/master/samples/jca/android-bsi/target/research)
    * [Android CogniCrypt (all versions)](https://github.com/CROSSINGTUD/MetaCrySL/tree/master/samples/jca/android-cc/target/research)
   
-### Binary Version of CrySL
+### Binary Version of CrySL Rules
 
 We used the CogniCrypt Eclipse plugin to compile the generated CrySL rules. The 
-compiled verision of the CrySL rules are used as input to the [CogniCrypt SAST 
+compiled version of the CrySL rules are used as input to the [CogniCrypt SAST 
 tool](https://github.com/CROSSINGTUD/CryptoAnalysis). 
 
    * [Android Base (all versions)](https://github.com/rbonifacio/MetaCrySL-DataSet/tree/master/bin/android)
@@ -201,28 +203,25 @@ tool](https://github.com/CROSSINGTUD/CryptoAnalysis).
    
 ### Datasets 
 
-   * [List of apps used in the study](s03/app-ids.csv)
+   * [List of apps used in the study](https://github.com/rbonifacio/TR-Meta-CrySL-Package/blob/master/s03/app-ids.csv)
    * Violations 
-      * [version android-0108](s03/android-0108.csv)
-      * [version android-0116](s03/android-0116.csv)
-      * [version android-25plus](s03/android-25plus.csv)
-      * [version android-bsi-0108](s03/android-bsi-0108.csv)
-      * [version android-bsi-0116](s03/android-bsi-0116.csv)
-      * [version android-bsi-25plus](s03/android-bsi-25plus.csv)
-      * [version android-cc-0108](s03/android-cc-0108.csv)
-      * [version android-cc-0116](s03/android-cc-0116.csv)
-      * [version android-cc-25plus](s03/android-cc-25plus.csv)
+      * [version android-0108](https://github.com/rbonifacio/TR-Meta-CrySL-Package/blob/master/s03/android-0108.csv)
+      * [version android-0116](https://github.com/rbonifacio/TR-Meta-CrySL-Package/blob/master/s03/android-0116.csv)
+      * [version android-25plus](https://github.com/rbonifacio/TR-Meta-CrySL-Package/blob/master/s03/android-25plus.csv)
+      * [version android-bsi-0108](https://github.com/rbonifacio/TR-Meta-CrySL-Package/blob/master/s03/android-bsi-0108.csv)
+      * [version android-bsi-0116](https://github.com/rbonifacio/TR-Meta-CrySL-Package/blob/master/s03/android-bsi-0116.csv)
+      * [version android-bsi-25plus](https://github.com/rbonifacio/TR-Meta-CrySL-Package/blob/master/s03/android-bsi-25plus.csv)
+      * [version android-cc-0108](https://github.com/rbonifacio/TR-Meta-CrySL-Package/blob/master/s03/android-cc-0108.csv)
+      * [version android-cc-0116](https://github.com/rbonifacio/TR-Meta-CrySL-Package/blob/master/s03/android-cc-0116.csv)
+      * [version android-cc-25plus](https://github.com/rbonifacio/TR-Meta-CrySL-Package/blob/master/s03/android-cc-25plus.csv)
       
    
 ### Scripts 
 
-   * [RMD](s03/violation-analysis.Rmd)
-   * [HTML](hs03/violation-analysis.html)
+   * [RMD](https://github.com/rbonifacio/TR-Meta-CrySL-Package/blob/master/s03/violation-analysis.Rmd)
+   * [HTML](https://htmlpreview.github.io/?https://github.com/rbonifacio/TR-Meta-CrySL-Package/blob/master/s03/violation-analysis.html)
 
 # Live version of this package 
 
 An on-line and **live** version of this package is also available at this 
 [public repository](https://github.com/rbonifacio/TR-Meta-CrySL-Package).
-
-
-

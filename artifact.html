@@ -131,6 +131,7 @@ a.sourceLine {
 <div class="inner">
 <header>
 <h1 class="title toc-ignore">Dealing with Variability in API Misuse Specification</h1>
+<h2 class="subtitle">Artifact Package</h2>
 <h3 class="author">Rodrigo Bonifácio, Stefan Krüger, Krishna Narasimhan, Eric Bodden, and Mira Mezini</h3>
 <h3 class="date">March, 2021</h3>
 </header>
@@ -146,7 +147,7 @@ a.sourceLine {
 </style>
 <div id="abstract" class="section level1">
 <h1>Abstract</h1>
-<p>APIs are the primary mechanism for developers to gain access to externally defined services and tools. However, previous research has revealed API misuses that violate the contract of APIs to be prevalent. Such misuses can have harmful consequences, especially in the context of cryptographic libraries. Various API-misuse detectors have been proposed to address this issue—including CogniCrypt, one of the most versatile of such detectors and that uses a language (CrySL) to specify cryptographic API usage contracts. Nonetheless, existing approaches to detect API misuse had not been designed for systematic reuse, ignoring the fact that different versions of a library, different versions of a platform, and different recommendations/guidelines might introduce variability in the correct usage of an API. Yet, little is known about how such variability impacts the specification of the correct API usage. This paper investigates this question by analyzing the impact of various sources of variability on widely used Java cryptographic libraries (including JCA/JCE, Bouncy Castle, and Google Tink). The results of our investigation show that sources of variability like new versions of the API and security standards significantly impact the specifications. We then use the insights gained from our investigation to motivate an extension to the CrySL language (named MetaCrySL), which builds on meta-programming concepts. We evaluate MetaCrySL by specifying usage rules for a family of Android versions and illustrate that MetaCrySL can model all forms of variability we identified and drastically reduce the size of a family of specifications for the correct usage of cryptographic APIs.</p>
+<p>APIs are the primary mechanism for developers to gain access to externally defined services and tools. However, previous research has revealed API misuses that violate the contract of APIs to be prevalent. Such misuses can have harmful consequences, especially in the context of cryptographic libraries. Various API-misuse detectors have been proposed to address this issue—including CogniCrypt, one of the most versatile of such detectors and that uses a language (CrySL) to specify cryptographic API usage contracts. Nonetheless, existing approaches to detect API misuse had not been designed for systematic reuse, ignoring the fact that different versions of a library, different versions of a platform, and different recommendations/guidelines might introduce variability in the correct usage of an API. Yet, little is known about how such variability impacts the specification of the correct API usage. This paper investigates this question by analyzing the impact of various sources of variability on widely used Java cryptographic libraries (including JCA/JCE, Bouncy Castle, and Google Tink). The results of our investigation show that sources of variability like new versions of the API and security standards significantly impact the specifications. We then use the insights gained from our investigation to motivate an extension to the CrySL language (named MetaCrySL), which builds on meta-programming concepts. We evaluate MetaCrySL by specifying usage rules for a family of Android versions and illustrate that MetaCrySL can model all forms of variability we identified and drastically reduce the size of a family of specifications for the correct usage of cryptographic APIs. <strong>In this artifact package</strong>, we present the tools, datasets, and scripts used in the research.</p>
 </div>
 <div id="metacrysl-implementations" class="section level1">
 <h1>(1) MetaCrySL implementations</h1>
@@ -238,7 +239,7 @@ a.sourceLine {
 </div>
 <div id="metacrysl-empirical-assessment" class="section level1">
 <h1>(3) MetaCrySL empirical assessment</h1>
-<p>We evaluated MetaCrySL regarding two dimensions: (a) Compactness (how many lines of specification we can save using MetaCrySL and How much duplication of specifications we can save using MetaCrySL) and (b) Correctness (observing the implications of using the outcomes of MetaCrySL to mine the incorrect use of crypto API).</p>
+<p>We evaluated MetaCrySL regarding two dimensions: (a) Compactness (how many lines of specification we can save using MetaCrySL and how much duplication of specifications we can save using MetaCrySL) and (b) Correctness (observing the implications of using the outcomes of MetaCrySL to mine the incorrect usage of crypto API).</p>
 <p>In this study we used MetaCrySL to specify different sets of CrySL specifications for the Android platform. These specifications address all JCA/JCE cryptographic primitives, the guidelines from three cryptographic <strong>recommendations</strong> (from the <a href="https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/TechGuidelines/TG02102/BSI-TR-02102-1.html">BSI standard</a>, from the <a href="https://www.eclipse.org/cognicrypt/">CogniCrypt project</a>, and from the <a href="https://developer.android.com/guide/topics/security/cryptography">Google Android Cryptographic documentation</a>), and three ranges of the Android platform versions (01 – 08, 01 – 16, 01 – 28). The following table shows the nine configurations we derive from these MetaCrySL specifications.</p>
 <table>
 <thead>
@@ -332,13 +333,35 @@ a.sourceLine {
 <li><a href="https://github.com/rbonifacio/MetaCrySL-DataSet/tree/master/bin/android-cc">Android CogniCrypt (all versions)</a></li>
 </ul>
 </div>
-<div id="datasets-tools-and-scripts" class="section level3">
-<h3>Datasets, Tools, and Scripts</h3>
+<div id="datasets" class="section level3">
+<h3>Datasets</h3>
 <ul>
-<li><a href="s03/violation-analysis.html">HTML</a></li>
-<li><a href="s03/violation-analysis.Rmd">RMD</a></li>
+<li><a href="s03/app-ids.csv">List of apps used in the study</a></li>
+<li>Violations
+<ul>
+<li><a href="s03/android-0108.csv">version android-0108</a></li>
+<li><a href="s03/android-0116.csv">version android-0116</a></li>
+<li><a href="s03/android-25plus.csv">version android-25plus</a></li>
+<li><a href="s03/android-bsi-0108.csv">version android-bsi-0108</a></li>
+<li><a href="s03/android-bsi-0116.csv">version android-bsi-0116</a></li>
+<li><a href="s03/android-bsi-25plus.csv">version android-bsi-25plus</a></li>
+<li><a href="s03/android-cc-0108.csv">version android-cc-0108</a></li>
+<li><a href="s03/android-cc-0116.csv">version android-cc-0116</a></li>
+<li><a href="s03/android-cc-25plus.csv">version android-cc-25plus</a></li>
+</ul></li>
 </ul>
 </div>
+<div id="scripts" class="section level3">
+<h3>Scripts</h3>
+<ul>
+<li><a href="s03/violation-analysis.Rmd">RMD</a></li>
+<li><a href="hs03/violation-analysis.html">HTML</a></li>
+</ul>
+</div>
+</div>
+<div id="live-version-of-this-package" class="section level1">
+<h1>Live version of this package</h1>
+<p>An on-line and <strong>live</strong> version of this package is also available at this <a href="https://github.com/rbonifacio/TR-Meta-CrySL-Package">public repository</a>.</p>
 </div>
 </div>
 </div>

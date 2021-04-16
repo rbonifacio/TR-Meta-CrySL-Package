@@ -1,5 +1,5 @@
 ---
-title: "Study 03: Android Crypto Violation Analysis"
+title: "Android Crypto Violation Analysis"
 author: "Rodrigo Bonifácio, Stefan Krüger, Krishna Narasimhan, Eric Bodden, and Mira Mezini "
 date: "March, 2021"
 output:

@@ -198,7 +198,8 @@ a.sourceLine {
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(apps)</span></code></pre></div>
 <pre><code>## [1] 7629</code></pre>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>apps[<span class="st">&quot;project_name&quot;</span>] <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;.apk&quot;</span>, <span class="st">&quot;&quot;</span>, apps<span class="sc">$</span>SoftwareId)</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>apps[<span class="st">&quot;project_name&quot;</span>] <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;/home/amluis/cryptoAnalysis/AndroidZooApps/&quot;</span>, <span class="st">&quot;&quot;</span>, apps<span class="sc">$</span>project_name)</span></code></pre></div>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>apps[<span class="st">&quot;project_name&quot;</span>] <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;/home/amluis/cryptoAnalysis/AndroidZooApps/&quot;</span>, <span class="st">&quot;&quot;</span>, apps<span class="sc">$</span>project_name)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(apps<span class="sc">$</span>project_name, <span class="at">file=</span><span class="st">&quot;apps-id.csv&quot;</span>)</span></code></pre></div>
 </div>
 <div id="join-the-violations-and-apps-datasets" class="section level2">
 <h2>Join the <code>violations</code> and <code>apps</code> datasets</h2>
@@ -270,7 +271,7 @@ a.sourceLine {
 ## 9  android-cc-25plus 6714 3496 52.070301       9565</code></pre>
 <div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">xtable</span>(<span class="fu">sqldf</span>(<span class="st">&#39;select configuration, 6714, apps, rate, violations from t1&#39;</span>))</span></code></pre></div>
 <pre><code>## % latex table generated in R 4.0.4 by xtable 1.8-4 package
-## % Wed Apr 14 10:57:12 2021
+## % Fri Apr 16 16:32:56 2021
 ## \begin{table}[ht]
 ## \centering
 ## \begin{tabular}{rlrrrr}
