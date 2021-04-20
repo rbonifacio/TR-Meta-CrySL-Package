@@ -23,5 +23,9 @@ APIs are the primary mechanism for developers to gain access to externally defin
 This artifact package presents the MetaCrySL implementations and makes available all tools,
 datasets, and scripts used in this research. Please, click in the following link to browse in the artifact description.
 
-
    * [ECOOP artifact package](https://htmlpreview.github.io/?https://github.com/rbonifacio/TR-Meta-CrySL-Package/blob/master/artifact.html)
+
+We also prepared a VirtualBox image, which is available in the following links:
+
+   * [Image Description](https://www.dropbox.com/scl/fi/bjeoo5mfe5re9sr4rhpy7/README.paper?dl=0&rlkey=36nihorja1n8xg88w2l9tzcam)
+   * [Image OVF file (12.5 GB)](https://www.dropbox.com/s/knahe84p6woir6j/meta-crysl.ova?dl=0)
