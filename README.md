@@ -25,7 +25,14 @@ datasets, and scripts used in this research. Please, click in the following link
 
    * [ECOOP artifact package](https://htmlpreview.github.io/?https://github.com/rbonifacio/TR-Meta-CrySL-Package/blob/master/artifact.html)
 
-We also prepared a VirtualBox image, which is available in the following links:
+We also prepared a Docker image for running MetaCrySL from the command line.
 
-   * [Image Description](https://www.dropbox.com/scl/fi/bjeoo5mfe5re9sr4rhpy7/README.paper?dl=0&rlkey=9fczx1zphzzwklqatwnyu2smd)
-   * [Image OVF file (12.5 GB)](https://www.dropbox.com/s/knahe84p6woir6j/meta-crysl.ova?dl=0)
+
+```{shell}
+$ docker pull rbonifacio/mcsl-java8
+$ docker run -it rbonifacio/mcsl-java8:v1 bash
+root@...:/mcsl> cd MetaCrySL
+root@...:/mcsl/MetaCrySL> rascal-shell
+rascal> import generator::Main;
+rascal> main(|cwd:///samples/jca/android/config/Android0108.config|);
+```
