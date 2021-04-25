@@ -38,10 +38,61 @@ implementation.
    * [MetaCrySL in XText](https://github.com/PAMunb/MetaCrySL) 
    
 Detailed instructions about how to set up and use these implementations are 
-available in the respective repositories. The following video explains how 
-to use the MetaCrySL Rascal version. 
+available in the respective repositories. 
+
+## Running the Rascal implementation from Eclipse 
+
+The following video explains how 
+to use the MetaCrySL Rascal version from Eclipse. 
 
 [![MetaCrySL on YouTube](mcsl.png){ width=50% }](https://youtu.be/PmYWK926RrM)
+
+## Running the Rascal implementation from the command line 
+
+It is also possible to run the Rascal implementation from the command line. 
+You must have git, wget, and Java Development Kit 8 (or above). 
+To run MetaCrySL Rascal from the command line, follow these steps from a terminal: 
+
+````{shell}
+$ mkdir mcsl
+$ cd mcsl
+$ wget https://update.rascal-mpl.org/console/rascal-shell-stable.jar
+$ alias rascal-shell="java -Xmx1G -Xss32m -jar $(pwd)/rascal-shell-stable.jar"
+$ git clone https://github.com/CROSSINGTUD/MetaCrySL.git
+$ cd MetaCrySL
+$ rascal-shell
+
+rascal> import generator::Main;
+
+rascal> main(|cwd:///samples/jca/android/config/Android0108.config|);
+```
+      
+**Note:** You must review the `src` and `out` paths 
+of the configuration files. These configuration files are 
+within the following folders: 
+
+   * samples/jca/android/config/
+   * samples/jca/android-cc/config/
+   * samples/jca/android-bsi/config/
+
+The `src` folder must point to the full-qualified path of the `samples/jca/base` 
+directory (within the MetaCrySL local repository). You can decide where MetaCrySL 
+should generate the resulting CrySL rules (the `out` directory).   
+
+## Running the Rascal implementation from a Docker Image       
+
+We also made available a docker image. To use it, proceed as follow:
+
+```{shell}
+$ docker pull rbonifacio/mcsl-java8
+$ docker run -it rbonifacio/mcsl-java8:v1 bash
+root@...:/mcsl> cd MetaCrySL
+root@...:/mcsl/MetaCrySL> rascal-shell
+rascal> import generator::Main;
+rascal> main(|cwd:///samples/jca/android/config/Android0108.config|);
+```
+
+
    
 
 # (2) Domain Analysis 
