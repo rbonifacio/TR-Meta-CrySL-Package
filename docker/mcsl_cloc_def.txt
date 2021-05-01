@@ -1,0 +1,58 @@
+MCSL
+    filter rm_comments_in_strings " /* */
+    filter rm_comments_in_strings " // 
+    filter call_regexp_common C++
+    extension cryptsl
+    3rd_gen_scale 5.00
+REFINEMENT
+    filter rm_comments_in_strings " /* */
+    filter rm_comments_in_strings " // 
+    filter call_regexp_common C++
+    extension ref
+    3rd_gen_scale 5.00
+CONFIG
+    filter rm_comments_in_strings " /* */
+    filter rm_comments_in_strings " // 
+    filter call_regexp_common C++
+    extension config
+    3rd_gen_scale 5.00
+C
+    filter rm_comments_in_strings " /* */
+    filter rm_comments_in_strings " // 
+    filter call_regexp_common C++
+    extension c
+    extension cats
+    extension ec
+    extension idc
+    extension pgc
+    3rd_gen_scale 0.77
+    end_of_line_continuation \\$
+C++
+    filter rm_comments_in_strings " /* */
+    filter rm_comments_in_strings " // 
+    filter call_regexp_common C++
+    extension C
+    extension CPP
+    extension c++
+    extension cc
+    extension cpp
+    extension cxx
+    extension h++
+    extension inl
+    extension ipp
+    extension pcc
+    extension tcc
+    extension tpp
+    3rd_gen_scale 1.51
+    end_of_line_continuation \\$
+C/C++ Header
+    filter rm_comments_in_strings " /* */
+    filter rm_comments_in_strings " // 
+    filter call_regexp_common C++
+    extension H
+    extension h
+    extension hh
+    extension hpp
+    extension hxx
+    3rd_gen_scale 1.00
+    end_of_line_continuation \\$
